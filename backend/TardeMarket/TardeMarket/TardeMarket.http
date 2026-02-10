@@ -1,0 +1,6 @@
+@TardeMarket_HostAddress = http://localhost:5103
+
+GET {{TardeMarket_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
