@@ -12,7 +12,7 @@ public static class InfrastructureServiceCollectionExtensions
     {
         services.AddMemoryCache();
 
-        services.AddHttpClient<IAssetRepository, YahooAssetRepository>();
+        services.AddHttpClient<IAssetRepository, FinnhubAssetRepository>();
 
         return services;
     }
