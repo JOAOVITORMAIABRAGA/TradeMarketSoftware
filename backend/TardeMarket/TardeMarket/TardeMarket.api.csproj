@@ -14,4 +14,10 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TradeMarket.Application\TradeMarket.Application.csproj" />
+    <ProjectReference Include="..\TradeMarket.Domain\TradeMarket.Domain.csproj" />
+    <ProjectReference Include="..\TradeMarket.Infrastructure\TradeMarket.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

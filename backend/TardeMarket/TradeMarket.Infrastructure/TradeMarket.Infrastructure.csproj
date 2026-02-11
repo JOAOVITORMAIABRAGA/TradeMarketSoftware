@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TradeMarket.Application\TradeMarket.Application.csproj" />
+    <ProjectReference Include="..\TradeMarket.Domain\TradeMarket.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
