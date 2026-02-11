@@ -55,9 +55,22 @@ public class YahooAssetRepository : IAssetRepository
         {
             Ticker = dto.Symbol,
             Name = dto.ShortName,
+            Type = "FII",
+            Sector = "Logistics",
+
             CurrentPrice = dto.RegularMarketPrice,
-            DividendYield = dto.DividendYield * 100
+            PriceChangePercent = result
+        .GetProperty("price")
+        .GetProperty("regularMarketChangePercent")
+        .GetProperty("raw")
+        .GetDecimal(),
+
+            DividendYield = dto.DividendYield * 100,
+            DividendYield12M = dto.DividendYield * 100,
+
+            LastUpdated = DateTime.UtcNow
         };
+
 
         _cache.Set(cacheKey, snapshot, TimeSpan.FromMinutes(CacheMinutes));
 
