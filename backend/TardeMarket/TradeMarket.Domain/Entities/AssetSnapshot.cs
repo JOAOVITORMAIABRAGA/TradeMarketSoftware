@@ -2,20 +2,18 @@
 
 public class AssetSnapshot
 {
-    // Identity
-    public string Ticker { get; init; } = string.Empty;
-    public string Name { get; init; } = string.Empty;
-    public string Type { get; init; } = string.Empty;
-    public string Sector { get; init; } = string.Empty;
+    public string Ticker { get; set; } = default!;
+    public string Name { get; set; } = default!;
+    public string Sector { get; set; } = default!;
+    public string Country { get; set; } = default!;
 
-    // Price
-    public decimal CurrentPrice { get; init; }
-    public decimal PriceChangePercent { get; init; }
+    public decimal CurrentPrice { get; set; }
+    public decimal PriceChangePercent { get; set; }
 
-    // Income
-    public decimal DividendYield { get; init; }
-    public decimal DividendYield12M { get; init; }
+    public decimal? High52Week { get; set; }
+    public decimal? Low52Week { get; set; }
+    public decimal? MarketCap { get; set; }
 
-    // Metadata
-    public DateTime LastUpdated { get; init; }
+    public DateTime LastUpdated { get; set; }
 }
+

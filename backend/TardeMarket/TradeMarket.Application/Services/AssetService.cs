@@ -1,4 +1,6 @@
-﻿using TradeMarket.Application.ViewModels;
+﻿using System.Diagnostics.Metrics;
+using System.Xml.Linq;
+using TradeMarket.Application.ViewModels;
 using TradeMarket.Domain.Repositories;
 
 namespace TradeMarket.Application.Services;
@@ -21,35 +23,18 @@ public class AssetService : IAssetService
         {
             Ticker = snapshot.Ticker,
             Name = snapshot.Name,
-            Type = snapshot.Type,
             Sector = snapshot.Sector,
+            Country = snapshot.Country,
 
             CurrentPrice = snapshot.CurrentPrice,
-            PriceVariationPercent = snapshot.PriceChangePercent,
+            PriceChangePercent = snapshot.PriceChangePercent,
 
-            DividendYield = snapshot.DividendYield,
-            DividendYieldStatus = GetYieldStatus(snapshot.DividendYield),
-            DividendYieldExplanation = GetYieldExplanation(snapshot.DividendYield),
+            High52Week = snapshot.High52Week,
+            Low52Week = snapshot.Low52Week,
+            MarketCap = snapshot.MarketCap,
 
-            LastUpdated = snapshot.LastUpdated
+            LastUpdated = DateTime.UtcNow
         };
     }
 
-
-    private string GetYieldStatus(decimal yield)
-    {
-        if (yield >= 8) return "Good";
-        if (yield >= 5) return "Neutral";
-        return "Bad";
-    }
-
-    private string GetYieldExplanation(decimal yield)
-    {
-        return yield switch
-        {
-            >= 8 => "The dividend yield is above the market average, indicating strong income generation.",
-            >= 5 => "The dividend yield is within the market average range.",
-            _ => "The dividend yield is below expectations, which may indicate lower income generation."
-        };
-    }
 }
