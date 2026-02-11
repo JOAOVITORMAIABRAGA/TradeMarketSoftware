@@ -1,138 +1,181 @@
-# TradeMarket 📈
+# 📈 TradeMarket
 
-**TradeMarket** is an educational web platform designed to help users understand stock market assets beyond raw numbers.  
-Instead of only displaying financial data, the platform explains *what each indicator means*, *why it matters*, and *how to interpret it*.
+TradeMarket is an educational web platform designed to help users understand stock market assets beyond raw numbers.
+
+Instead of only displaying financial data, the platform explains what each indicator means, why it matters, and how to interpret it.
 
 ---
 
 ## 🎯 Problem
 
-Most financial applications focus on displaying charts and indicators, assuming the user already understands them.  
-For beginners and intermediate investors, this creates a knowledge gap between *seeing data* and *understanding decisions*.
+Most financial applications focus only on displaying charts and indicators, assuming the user already understands them.
+
+For beginners and intermediate investors, this creates a knowledge gap between seeing data and understanding decisions.
 
 ---
 
 ## 💡 Solution
 
-TradeMarket combines **real market data** with **educational explanations**.  
-Each asset indicator is enriched with:
-- Clear definitions
-- Practical interpretation
-- Visual status indicators (good / neutral / bad)
-- Contextual explanations (tooltips & hover interactions)
+TradeMarket combines real market data with educational explanations.
 
-The goal is to transform market data into **learning-oriented insights**.
+Each asset response is enriched with:
+
+- Clear definitions  
+- Practical interpretation  
+- Structured API responses  
+- Clean architectural separation  
+- Abstraction of external providers  
+
+The goal is to transform raw market data into structured, learning-oriented insights.
 
 ---
 
 ## 🧠 Educational Focus
 
-For every indicator (e.g. Dividend Yield, P/VP):
-- **What is it?**
-- **Why is it important?**
-- **When is it considered good or bad?**
-- **Why is the current value classified as such?**
+For every financial indicator:
+
+- What is it?  
+- Why is it important?  
+- How should it be interpreted?  
+- What does the current variation suggest?  
 
 This makes TradeMarket suitable for:
-- Beginners learning about the stock market
-- Developers interested in financial systems
-- Educational or portfolio-oriented projects
+
+- Beginners learning about the stock market  
+- Developers interested in financial system architecture  
+- Portfolio-oriented backend projects  
 
 ---
 
 ## 🧱 Architecture Overview
 
-The project follows **Clean Architecture principles** with a clear separation of concerns.
+The project follows **Clean Architecture principles** with strict separation of concerns.
 
-TradeMarket.Api
-│── Controllers (HTTP layer)
+### 📂 Project Structure
+
+TradeMarket
 │
-TradeMarket.Application
-│── Services (Business logic)
-│── ViewModels (API responses)
-│── Extensions (Dependency Injection)
+├── TradeMarket.Api
+│ └── Controllers (HTTP layer)
 │
-TradeMarket.Domain
-│── Entities
-│── Repository Interfaces
+├── TradeMarket.Application
+│ ├── Services (Business orchestration)
+│ ├── ViewModels (API contracts)
+│ └── Extensions (Dependency Injection)
 │
-TradeMarket.Infrastructure
-│── External API integrations
-│── Repositories
-│── Caching layer
-│── Dependency Injection
+├── TradeMarket.Domain
+│ ├── Entities
+│ └── Repository Interfaces
+│
+└── TradeMarket.Infrastructure
+├── External API integrations (Finnhub)
+├── Repository implementations
+└── Dependency Injection
 
 
-### Key architectural decisions:
-- MVC for API exposure
-- Business rules isolated in Application layer
-- External APIs abstracted behind repositories
-- Infrastructure concerns (cache, HTTP) fully decoupled
-- Designed for easy replacement of data providers
+### 🔑 Key Architectural Decisions
+
+- MVC for API exposure  
+- Business rules isolated in Application layer  
+- External APIs abstracted behind repository interfaces  
+- Infrastructure fully decoupled from domain logic  
+- Easy replacement of data providers (Yahoo → Finnhub migration implemented)  
+- HttpClientFactory for external communication  
 
 ---
 
-## 🔌 Data Source & Caching
+## 🔌 External Data Provider
 
-- External data is fetched from **Yahoo Finance API**
-- Results are cached in-memory for **10 minutes**
-- Cache logic is isolated in the Infrastructure layer
+Market data is fetched from:
 
-This approach reduces external calls while keeping data reasonably fresh.
+**Finnhub API**  
+https://finnhub.io/
+
+### Endpoints Used
+
+- `/quote` → Current price and variation  
+- `/stock/profile2` → Company information  
+
+The provider is abstracted via `IAssetRepository`, allowing future replacement without impacting business logic.
 
 ---
 
-## 🌐 API Endpoints (initial)
+## 🌐 API Endpoint
 
-```http
-GET /api/assets/{ticker}
-Returns:
+### `GET /api/assets/{ticker}`
 
+Example request:
+
+GET /api/assets/AAPL
+
+
+Example response:
+
+```json
+{
+  "ticker": "AAPL",
+  "name": "Apple Inc",
+  "type": "Stock",
+  "sector": "Technology",
+  "currentPrice": 189.42,
+  "priceVariationPercent": -0.54,
+  "lastUpdated": "2026-02-11T12:48:00Z"
+}
+
+📊 Current Indicators
 Asset identity
+
+Sector
 
 Current price
 
-Dividend yield
+Daily price variation (%)
 
-Educational explanations
-
-Indicator status classification
+Dividend Yield was removed in the current version due to API plan limitations.
 
 🛠️ Tech Stack
-Backend: .NET / ASP.NET Core
+Backend
+.NET
 
-Frontend: React
+ASP.NET Core
 
-Architecture: Clean Architecture + MVC
+Clean Architecture
 
-Caching: IMemoryCache
+HttpClientFactory
 
-External API: Yahoo Finance
+Frontend (Planned)
+React
+
+External API
+Finnhub
 
 🚀 Roadmap
-Planned next steps:
+Planned improvements:
 
-Price history charts
+📈 Historical price charts using /stock/candle
 
-Dividend history and consistency analysis
+📊 Frontend visualization with React
 
-Risk indicators (vacancy, concentration, interest sensitivity)
+🔁 Retry policies (Polly)
 
-Asset comparison by sector
+💾 Optional historical data persistence
 
-Educational glossary module
+🧪 Unit tests for Application layer
 
 ⚠️ Disclaimer
 This project is educational and does not provide financial advice.
+
 All classifications and explanations are intended for learning purposes only.
 
 👤 Author
+João Vítor Maia Braga
+
 Developed as a portfolio and educational project focused on:
 
-Software architecture
+Clean Architecture
 
 API design
 
-Clean code practices
+External service integration
 
-Financial data interpretation
+Backend engineering best practices
