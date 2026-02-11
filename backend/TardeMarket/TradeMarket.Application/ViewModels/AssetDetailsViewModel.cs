@@ -21,4 +21,4 @@ public class AssetDetailsViewModel
     public DateTime LastUpdated { get; set; }
 }
 
-}
+
