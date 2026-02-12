@@ -34,6 +34,19 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+
 var app = builder.Build();
 
 //
@@ -58,6 +71,8 @@ app.UseHttpsRedirection();
 
 // Enables authorization middleware (ready for future auth mechanisms)
 app.UseAuthorization();
+
+app.UseCors("AllowFrontend");
 
 // Maps controller endpoints
 app.MapControllers();
