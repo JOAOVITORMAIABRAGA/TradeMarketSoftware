@@ -37,7 +37,7 @@ public class AlphaVantageHistoryRepository : IAssetHistoryRepository
             to = DateTime.UtcNow.Date;
 
         var url =
-            $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={ticker}&outputsize=compact&apikey={_apiKey}";
+            $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={ticker}&outputsize=full&apikey={_apiKey}";
 
         Console.WriteLine($"Request URL: {url}");
 
