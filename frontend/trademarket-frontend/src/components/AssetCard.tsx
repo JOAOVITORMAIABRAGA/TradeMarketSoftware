@@ -1,6 +1,5 @@
 import React from "react";
 import { AssetDetails } from "../types/asset";
-import AssetHistorySection from "./AssetHistorySection";
 import Tooltip from "./InfoTooltip";
 
 interface Props {
@@ -88,9 +87,6 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
         {new Date(asset.lastUpdated).toLocaleString()}
       </p>
 
-      <div style={{ marginTop: "1.5rem" }}>
-        <AssetHistorySection ticker={asset.ticker} />
-      </div>
     </div>
   );
 };
