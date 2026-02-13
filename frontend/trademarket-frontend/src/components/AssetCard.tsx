@@ -1,40 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { AssetDetails } from "../types/asset";
-import { AssetHistoryPoint } from "../types/assetHistory";
-import { getAssetHistory } from "../api/AssetService";
-import AssetHistoryChart from "./AssetHistoryChart";
+import AssetHistorySection from "./AssetHistorySection";
+import Tooltip from "./InfoTooltip";
 
 interface Props {
   asset: AssetDetails;
 }
 
 const AssetCard: React.FC<Props> = ({ asset }) => {
-  const [history, setHistory] = useState<AssetHistoryPoint[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
-
-  useEffect(() => {
-    async function fetchHistory() {
-      setLoadingHistory(true);
-
-      const to = new Date();
-      const from = new Date();
-      from.setMonth(from.getMonth() - 6);
-
-      const formattedFrom = from.toISOString().split("T")[0];
-      const formattedTo = to.toISOString().split("T")[0];
-
-      const data = await getAssetHistory(
-        asset.ticker,
-        formattedFrom,
-        formattedTo
-      );
-
-      setHistory(data);
-      setLoadingHistory(false);
-    }
-
-    fetchHistory();
-  }, [asset.ticker]);
 
   const formatCurrency = (value: number) =>
     value.toLocaleString("en-US", {
@@ -73,12 +46,18 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
       <hr />
 
       <p>
-        <strong>Current Price:</strong>{" "}
+        <strong>
+          Current Price
+          <Tooltip text="Último preço negociado no mercado durante o horário regular da bolsa." />
+        </strong>{" "}
         {formatCurrency(asset.currentPrice)}
       </p>
 
       <p>
-        <strong>Change:</strong>{" "}
+        <strong>
+          Change
+          <Tooltip text="Variação percentual do preço em relação ao fechamento anterior." />
+        </strong>{" "}
         <span style={{ color: changeColor, fontWeight: "bold" }}>
           {asset.priceChangePercent.toFixed(2)}%
         </span>
@@ -87,14 +66,19 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
       <hr />
 
       <p>
-        <strong>52W Range:</strong>{" "}
-        {formatCurrency(asset.low52Week)} -{" "}
-        {formatCurrency(asset.high52Week)}
+        <strong>
+          52W Range
+          <Tooltip text="Menor e maior preço registrados nos últimos 12 meses." />
+        </strong>{" "}
+        {formatCurrency(asset.low52Week)} - {formatCurrency(asset.high52Week)}
       </p>
 
       <p>
-        <strong>Market Cap:</strong>{" "}
-        {formatNumber(asset.marketCap)} M
+        <strong>
+          Market Cap
+          <Tooltip text="Valor total da empresa no mercado. Calculado multiplicando o preço atual pelo número total de ações emitidas." />
+        </strong>{" "}
+        {formatNumber(asset.marketCap)}
       </p>
 
       <hr />
@@ -104,17 +88,8 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
         {new Date(asset.lastUpdated).toLocaleString()}
       </p>
 
-      {/* 📈 Historical Chart */}
       <div style={{ marginTop: "1.5rem" }}>
-        <h3>6M History</h3>
-
-        {loadingHistory ? (
-          <p>Loading chart...</p>
-        ) : history.length > 0 ? (
-          <AssetHistoryChart data={history} />
-        ) : (
-          <p>No historical data available</p>
-        )}
+        <AssetHistorySection ticker={asset.ticker} />
       </div>
     </div>
   );
