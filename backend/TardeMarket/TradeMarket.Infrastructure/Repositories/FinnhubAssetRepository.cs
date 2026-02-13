@@ -2,6 +2,7 @@
 using System.Text.Json;
 using TradeMarket.Domain.Entities;
 using TradeMarket.Domain.Repositories;
+using TradeMarket.Infrastructure.External;
 
 namespace TradeMarket.Infrastructure.Repositories;
 
@@ -120,4 +121,5 @@ public class FinnhubAssetRepository : IAssetRepository
             LastUpdated = DateTime.UtcNow
         };
     }
+
 }

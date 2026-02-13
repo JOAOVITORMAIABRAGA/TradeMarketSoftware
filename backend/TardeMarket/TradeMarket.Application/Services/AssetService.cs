@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Metrics;
 using System.Xml.Linq;
+using TradeMarket.Application.Interfaces;
 using TradeMarket.Application.ViewModels;
 using TradeMarket.Domain.Repositories;
 
@@ -8,10 +9,14 @@ namespace TradeMarket.Application.Services;
 public class AssetService : IAssetService
 {
     private readonly IAssetRepository _repository;
+    private readonly IAssetHistoryRepository _historyRepository;
 
-    public AssetService(IAssetRepository repository)
+    public AssetService(
+        IAssetRepository assetRepository,
+        IAssetHistoryRepository historyRepository)
     {
-        _repository = repository;
+        _repository = assetRepository;
+        _historyRepository = historyRepository;
     }
 
     public async Task<AssetDetailsViewModel?> GetAssetDetailsAsync(string ticker)
@@ -35,6 +40,14 @@ public class AssetService : IAssetService
 
             LastUpdated = DateTime.UtcNow
         };
+    }
+
+    public async Task<List<AssetHistoryViewModel>> GetHistoryAsync(
+        string ticker,
+        DateTime from,
+        DateTime to)
+    {
+        return await _historyRepository.GetHistoryAsync(ticker, from, to);
     }
 
 }
