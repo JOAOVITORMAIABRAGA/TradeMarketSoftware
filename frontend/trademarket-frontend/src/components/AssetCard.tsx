@@ -1,11 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AssetDetails } from "../types/asset";
+import { AssetHistoryPoint } from "../types/assetHistory";
+import { getAssetHistory } from "../api/AssetService";
+import AssetHistoryChart from "./AssetHistoryChart";
 
 interface Props {
   asset: AssetDetails;
 }
 
 const AssetCard: React.FC<Props> = ({ asset }) => {
+  const [history, setHistory] = useState<AssetHistoryPoint[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchHistory() {
+      setLoadingHistory(true);
+
+      const to = new Date();
+      const from = new Date();
+      from.setMonth(from.getMonth() - 6);
+
+      const formattedFrom = from.toISOString().split("T")[0];
+      const formattedTo = to.toISOString().split("T")[0];
+
+      const data = await getAssetHistory(
+        asset.ticker,
+        formattedFrom,
+        formattedTo
+      );
+
+      setHistory(data);
+      setLoadingHistory(false);
+    }
+
+    fetchHistory();
+  }, [asset.ticker]);
+
   const formatCurrency = (value: number) =>
     value.toLocaleString("en-US", {
       style: "currency",
@@ -28,7 +58,7 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
         border: "1px solid #ccc",
         padding: "1.5rem",
         borderRadius: 12,
-        maxWidth: 500,
+        maxWidth: 600,
         marginBottom: "1.5rem",
         background: "#f9f9f9",
       }}
@@ -74,9 +104,17 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
         {new Date(asset.lastUpdated).toLocaleString()}
       </p>
 
-      {/* 🔮 FUTURE EXTENSION POINT */}
+      {/* 📈 Historical Chart */}
       <div style={{ marginTop: "1.5rem" }}>
-        {/* Historical chart will be rendered here */}
+        <h3>6M History</h3>
+
+        {loadingHistory ? (
+          <p>Loading chart...</p>
+        ) : history.length > 0 ? (
+          <AssetHistoryChart data={history} />
+        ) : (
+          <p>No historical data available</p>
+        )}
       </div>
     </div>
   );
