@@ -23,24 +23,46 @@ const SearchBar: React.FC<Props> = ({ initialValue = "" }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 w-full max-w-md">
-      <input
-        type="text"
-        placeholder="Digite o ticker (ex: AAPL)"
-        value={symbol}
-        onChange={(e) => setSymbol(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+  <div
+    style={{
+      display: "flex",
+      gap: "0.5rem",
+      width: "100%",
+    }}
+  >
+    <input
+      type="text"
+      placeholder="Digite o ticker (ex: AAPL)"
+      value={symbol}
+      onChange={(e) => setSymbol(e.target.value)}
+      onKeyDown={handleKeyDown}
+      style={{
+        flex: 1,
+        padding: "0.75rem 1rem",
+        borderRadius: 8,
+        border: "1px solid #334155",
+        background: "#0f172a",
+        color: "#e2e8f0",
+        outline: "none"
+      }}
+    />
 
-      <button
-        onClick={handleSearch}
-        className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-      >
-        <Search size={18} />
-      </button>
-    </div>
-  );
+    <button
+      onClick={handleSearch}
+      style={{
+        padding: "0 1rem",
+        borderRadius: 8,
+        border: "none",
+        background: "#3b82f6",
+        color: "white",
+        cursor: "pointer"
+      }}
+    >
+      🔍
+    </button>
+  </div>
+);
+
 };
 
 export default SearchBar;

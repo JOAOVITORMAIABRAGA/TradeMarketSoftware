@@ -27,12 +27,15 @@ const AssetCard: React.FC<Props> = ({ asset }) => {
   return (
     <div
       style={{
-        border: "1px solid #ccc",
+        border: "1px solid #334155",
+
         padding: "1.5rem",
         borderRadius: 12,
         maxWidth: 600,
         marginBottom: "1.5rem",
-        background: "#f9f9f9",
+        background: "transparent",
+        color: "#e2e8f0"
+
       }}
     >
       <h2>
