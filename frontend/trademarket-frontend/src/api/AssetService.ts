@@ -1,34 +1,26 @@
 import { AssetDetails } from "../types/asset";
 import { AssetHistoryPoint } from "../types/assetHistory";
 
-const API_BASE = "https://localhost:7096/api/assets";
+const API_BASE = "https://localhost:7096/api/assets"; // ajuste se necessário
 
-export async function getAsset(ticker: string): Promise<AssetDetails | null> {
-  try {
-    const res = await fetch(`${API_BASE}/${ticker}`);
-    if (!res.ok) return null;
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch asset:", err);
-    return null;
+export const getAsset = async (ticker: string): Promise<AssetDetails> => {
+  const response = await fetch(`${API_BASE}/${ticker}`);
+
+  if (!response.ok) {
+    throw new Error("Erro ao buscar ativo");
   }
-}
 
-export async function getAssetHistory(
-  ticker: string,
-  from: string,
-  to: string
-): Promise<AssetHistoryPoint[]> {
-  try {
-    const res = await fetch(
-      `${API_BASE}/${ticker}/history?from=${from}&to=${to}`
-    );
+  return response.json();
+};
 
-    if (!res.ok) return [];
+export const getAssetHistory = async (
+  ticker: string
+): Promise<AssetHistoryPoint[]> => {
+  const response = await fetch(`${API_BASE}/${ticker}/history`);
 
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch history:", err);
-    return [];
+  if (!response.ok) {
+    throw new Error("Erro ao buscar histórico");
   }
-}
+
+  return response.json();
+};

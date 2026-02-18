@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AssetHistoryChart from "./AssetHistoryChart";
 import DateRangeSelector, { RangeOption } from "./DateRangeSelector";
 import { getAssetHistory } from "../api/AssetService";
@@ -8,21 +8,32 @@ interface Props {
   ticker: string;
 }
 
-const RANGE_DAYS: Record<RangeOption, number> = {
-  "1M": 30,
-  "3M": 90,
-  "6M": 180,
-  "1Y": 365,
-  "YTD": 365, // tratado dinamicamente
-  "MAX": 10000
-};
-
 const AssetHistorySection: React.FC<Props> = ({ ticker }) => {
   const [range, setRange] = useState<RangeOption>("3M");
-  const [data, setData] = useState<AssetHistoryPoint[]>([]);
-  const [availableDays, setAvailableDays] = useState<number>(0);
+  const [fullData, setFullData] = useState<AssetHistoryPoint[]>([]);
+  const [filteredData, setFilteredData] = useState<AssetHistoryPoint[]>([]);
 
-  const calculateDates = (range: RangeOption) => {
+  // 🔥 BUSCA APENAS UMA VEZ POR TICKER
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const result = await getAssetHistory(ticker);
+        setFullData(result);
+        setFilteredData(result);
+      } catch (error) {
+        console.error("Erro ao buscar histórico:", error);
+        setFullData([]);
+        setFilteredData([]);
+      }
+    };
+
+    fetchHistory();
+  }, [ticker]);
+
+  // 🔥 FILTRO LOCAL (SEM NOVA CHAMADA)
+  useEffect(() => {
+    if (!fullData.length) return;
+
     const today = new Date();
     let from = new Date();
 
@@ -43,52 +54,17 @@ const AssetHistorySection: React.FC<Props> = ({ ticker }) => {
         from = new Date(today.getFullYear(), 0, 1);
         break;
       case "MAX":
-        from = new Date(2000, 0, 1);
-        break;
+        setFilteredData(fullData);
+        return;
     }
 
-    return { from, to: today };
-  };
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      const { from, to } = calculateDates(range);
-
-      const result = await getAssetHistory(
-        ticker,
-        from.toISOString().split("T")[0],
-        to.toISOString().split("T")[0]
-      );
-
-      setData(result);
-      setAvailableDays(result.length);
-    };
-
-    fetchHistory();
-  }, [ticker, range]);
-
-  // 🔥 Filtros habilitados dinamicamente
-  const enabledRanges = useMemo(() => {
-    return (Object.keys(RANGE_DAYS) as RangeOption[]).filter(r => {
-      if (r === "YTD") {
-        const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-        const diffDays = Math.ceil(
-          (new Date().getTime() - startOfYear.getTime()) /
-            (1000 * 60 * 60 * 24)
-        );
-        return availableDays >= diffDays;
-      }
-
-      return availableDays >= RANGE_DAYS[r];
+    const filtered = fullData.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= from;
     });
-  }, [availableDays]);
 
-  // 🔥 Se o range atual não for mais válido, ajusta automaticamente
-  useEffect(() => {
-    if (!enabledRanges.includes(range) && enabledRanges.length > 0) {
-      setRange(enabledRanges[enabledRanges.length - 1]);
-    }
-  }, [enabledRanges, range]);
+    setFilteredData(filtered);
+  }, [range, fullData]);
 
   return (
     <div>
@@ -97,10 +73,9 @@ const AssetHistorySection: React.FC<Props> = ({ ticker }) => {
       <DateRangeSelector
         selected={range}
         onChange={setRange}
-        enabledRanges={enabledRanges}
       />
 
-      <AssetHistoryChart data={data} />
+      <AssetHistoryChart data={filteredData} />
     </div>
   );
 };

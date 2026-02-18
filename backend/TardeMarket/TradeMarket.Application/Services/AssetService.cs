@@ -42,12 +42,10 @@ public class AssetService : IAssetService
         };
     }
 
-    public async Task<List<AssetHistoryViewModel>> GetHistoryAsync(
-        string ticker,
-        DateTime from,
-        DateTime to)
+    public async Task<List<AssetHistoryViewModel>> GetHistoryAsync(string ticker)
     {
-        return await _historyRepository.GetHistoryAsync(ticker, from, to);
+        return await _historyRepository.GetHistoryAsync(ticker);
     }
+
 
 }

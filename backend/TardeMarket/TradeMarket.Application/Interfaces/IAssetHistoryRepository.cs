@@ -8,8 +8,6 @@ namespace TradeMarket.Application.Interfaces
     public interface IAssetHistoryRepository
     {
         Task<List<AssetHistoryViewModel>> GetHistoryAsync(
-            string ticker,
-            DateTime from,
-            DateTime to);
+            string ticker);
     }
 }

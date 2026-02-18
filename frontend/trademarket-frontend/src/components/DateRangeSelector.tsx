@@ -20,8 +20,14 @@ const DateRangeSelector: React.FC<Props> = ({ selected, onChange }) => {
             marginRight: "8px",
             padding: "6px 12px",
             borderRadius: "6px",
-            border: selected === range ? "2px solid #2563eb" : "1px solid #ccc",
-            backgroundColor: selected === range ? "#e0e7ff" : "#fff",
+            border:
+              selected === range
+                ? "2px solid #2563eb"
+                : "1px solid #ccc",
+            backgroundColor:
+              selected === range
+                ? "#e0e7ff"
+                : "#fff",
             cursor: "pointer"
           }}
         >

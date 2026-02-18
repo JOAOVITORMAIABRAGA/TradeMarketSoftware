@@ -20,53 +20,27 @@ public class AlphaVantageHistoryRepository : IAssetHistoryRepository
                   ?? throw new InvalidOperationException("AlphaVantage ApiKey not configured.");
     }
 
-    public async Task<List<AssetHistoryViewModel>> GetHistoryAsync(
-        string ticker,
-        DateTime from,
-        DateTime to)
+    public async Task<List<AssetHistoryViewModel>> GetHistoryAsync(string ticker)
     {
-        Console.WriteLine("========== DEBUG START ==========");
-        Console.WriteLine($"Ticker: {ticker}");
-        Console.WriteLine($"From: {from}");
-        Console.WriteLine($"To: {to}");
-
-        from = from.Date;
-        to = to.Date;
-
-        if (to > DateTime.UtcNow.Date)
-            to = DateTime.UtcNow.Date;
-
         var url =
-            $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={ticker}&outputsize=full&apikey={_apiKey}";
-
-        Console.WriteLine($"Request URL: {url}");
+            $"https://www.alphavantage.co/query" +
+            $"?function=TIME_SERIES_DAILY" +
+            $"&symbol={ticker}" +
+            $"&outputsize=compact" +
+            $"&apikey={_apiKey}";
 
         var response = await _httpClient.GetAsync(url);
 
-        Console.WriteLine($"Status Code: {response.StatusCode}");
-
         if (!response.IsSuccessStatusCode)
-        {
-            Console.WriteLine("Request failed.");
             return new List<AssetHistoryViewModel>();
-        }
 
         var json = await response.Content.ReadAsStringAsync();
-
-        Console.WriteLine("Raw JSON received:");
-        Console.WriteLine(json.Substring(0, Math.Min(json.Length, 1000))); // limita para não explodir console
 
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
 
         if (!root.TryGetProperty("Time Series (Daily)", out JsonElement timeSeries))
-        {
-            Console.WriteLine("Time Series (Daily) NOT FOUND.");
-            Console.WriteLine("========== DEBUG END ==========");
             return new List<AssetHistoryViewModel>();
-        }
-
-        Console.WriteLine($"Total days returned by API: {timeSeries.EnumerateObject().Count()}");
 
         var result = new List<AssetHistoryViewModel>();
 
@@ -78,9 +52,6 @@ public class AlphaVantageHistoryRepository : IAssetHistoryRepository
                     CultureInfo.InvariantCulture,
                     DateTimeStyles.None,
                     out var date))
-                continue;
-
-            if (date < from || date > to)
                 continue;
 
             var values = day.Value;
@@ -107,18 +78,9 @@ public class AlphaVantageHistoryRepository : IAssetHistoryRepository
             });
         }
 
-        Console.WriteLine($"Filtered results count: {result.Count}");
-
-        if (result.Any())
-        {
-            Console.WriteLine($"Min date: {result.Min(x => x.Date)}");
-            Console.WriteLine($"Max date: {result.Max(x => x.Date)}");
-        }
-
-        Console.WriteLine("========== DEBUG END ==========");
-
         return result
             .OrderBy(x => x.Date)
             .ToList();
     }
+
 }

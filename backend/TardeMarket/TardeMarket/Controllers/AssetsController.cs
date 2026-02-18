@@ -24,15 +24,10 @@ public class AssetsController : ControllerBase
     }
 
     [HttpGet("{ticker}/history")]
-    public async Task<IActionResult> GetHistory(
-    string ticker,
-    [FromQuery] DateTime from,
-    [FromQuery] DateTime to)
+    public async Task<IActionResult> GetHistory(string ticker)
     {
-        var result = await _service.GetHistoryAsync(ticker, from, to);
-
-        return Ok(result); // retorna lista vazia em vez de 404
+        var result = await _service.GetHistoryAsync(ticker);
+        return Ok(result);
     }
-
 
 }
